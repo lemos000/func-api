@@ -5,9 +5,13 @@ import br.com.fiap.annotation.Coluna;
 import br.com.fiap.annotation.Tabela;
 
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 
 @Tabela(nome="TAB_FUNCIONARIOSENIOR")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Entity
 public class FuncionarioSenior extends Funcionario {
     @Coluna(nome = "BONUS")
     private double bonus;

@@ -13,14 +13,10 @@ public class FuncionarioPJ extends Funcionario {
     @Coluna(nome = "VALOR_PROJETO")
     private double valorProjeto;
 
-    @Enumerated(EnumType.STRING)
-    @Coluna(nome = "STATUS_FUNCIONARIO")
-    private StatusFuncionario statusFuncionario;
 
     public FuncionarioPJ(String nome, int horasTrabalhadas, double valorHora, double valorProjeto, StatusFuncionario statusFuncionario) {
         super(nome, horasTrabalhadas, valorHora);
         this.valorProjeto = valorProjeto;
-        this.statusFuncionario = statusFuncionario;
     }
 
     public FuncionarioPJ() {
@@ -37,7 +33,6 @@ public class FuncionarioPJ extends Funcionario {
     public void imprimirInformacao() {
         super.imprimirInformacao();
         System.out.println("Valor do Projeto: R$ " + String.format("%.2f", valorProjeto));
-        System.out.println("Status: " + statusFuncionario);
     }
 
     public double getValorProjeto() {
@@ -48,12 +43,7 @@ public class FuncionarioPJ extends Funcionario {
         this.valorProjeto = valorProjeto;
     }
 
-    public StatusFuncionario getStatusFuncionario() {
-        return statusFuncionario;
-    }
 
-    public void setStatusFuncionario(StatusFuncionario statusFuncionario) {
-        this.statusFuncionario = statusFuncionario;
-    }
+
 }
 

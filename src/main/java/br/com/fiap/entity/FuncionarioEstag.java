@@ -6,8 +6,12 @@ import br.com.fiap.annotation.Tabela;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 
 @Tabela(nome="TAB_FUNCIONARIOESTAG")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Entity
 public class FuncionarioEstag extends Funcionario {
     @Coluna(nome = "DESCONTO")
     private double desconto;

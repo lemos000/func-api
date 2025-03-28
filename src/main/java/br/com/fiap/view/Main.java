@@ -15,8 +15,6 @@ public class Main {
 
         Funcionario funcionarioPJ = new FuncionarioPJ("Lucas", 55, 100, 1000, StatusFuncionario.ATIVO);
         funcionarioPJ.imprimirInformacao();
-
-
         String sqlPJ = SQLGenerator.generateSelectSQL(funcionarioPJ.getClass());
         System.out.println(sqlPJ);
 
