@@ -1,19 +1,13 @@
 package br.com.fiap.entity;
 
 
-import br.com.fiap.annotation.Coluna;
-import br.com.fiap.annotation.Tabela;
-
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
+import javax.persistence.*;
 
 
-@Tabela(nome="TAB_FUNCIONARIOSENIOR")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name="TAB_FUNCIONARIOSENIOR")
 @Entity
 public class FuncionarioSenior extends Funcionario {
-    @Coluna(nome = "BONUS")
+    @Column(name = "BONUS")
     private double bonus;
 
     public FuncionarioSenior(String nome, int horasTrabalhadas, double valorPorHora, double bonus) {

@@ -1,20 +1,15 @@
 package br.com.fiap.entity;
 
-import br.com.fiap.entity.StatusFuncionario;
-import br.com.fiap.annotation.Coluna;
-import br.com.fiap.annotation.Tabela;
-
 import javax.persistence.*;
 
-@Tabela(nome = "TAB_FUNCIONARIO_PJ")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "TAB_FUNCIONARIO_PJ")
 @Entity
 public class FuncionarioPJ extends Funcionario {
-    @Coluna(nome = "VALOR_PROJETO")
+    @Column(name = "VALOR_PROJETO")
     private double valorProjeto;
 
 
-    public FuncionarioPJ(String nome, int horasTrabalhadas, double valorHora, double valorProjeto, StatusFuncionario statusFuncionario) {
+    public FuncionarioPJ(String nome, int horasTrabalhadas, double valorHora, double valorProjeto) {
         super(nome, horasTrabalhadas, valorHora);
         this.valorProjeto = valorProjeto;
     }

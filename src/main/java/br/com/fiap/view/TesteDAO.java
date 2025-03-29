@@ -1,101 +1,127 @@
 package br.com.fiap.view;
 
-import br.com.fiap.annotation.Tabela;
-import br.com.fiap.entity.Funcionario;
-import br.com.fiap.entity.FuncionarioPJ;
-import br.com.fiap.entity.StatusFuncionario;
-import br.com.fiap.utility.SQLGenerator;
-import org.hibernate.Session;
-import org.hibernate.jdbc.Work;
+        import br.com.fiap.dao.FuncionarioDao;
+        import br.com.fiap.dao.FuncionarioEstagDao;
+        import br.com.fiap.dao.FuncionarioPJDao;
+        import br.com.fiap.dao.FuncionarioSeniorDao;
+        import br.com.fiap.entity.Funcionario;
+        import br.com.fiap.entity.FuncionarioEstag;
+        import br.com.fiap.entity.FuncionarioPJ;
+        import br.com.fiap.entity.FuncionarioSenior;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+        import javax.persistence.EntityManager;
+        import javax.persistence.EntityManagerFactory;
+        import javax.persistence.Persistence;
 
-public class TesteDAO {
+        public class TesteDAO {
 
-    public static void main(String[] args) {
-        EntityManagerFactory fabrica = Persistence.createEntityManagerFactory("CLIENTE_ORACLE");
+            public static void main(String[] args) {
+                EntityManagerFactory fabrica = Persistence.createEntityManagerFactory("CLIENTE_ORACLE");
+                EntityManager em = fabrica.createEntityManager();
 
-        EntityManager em = fabrica.createEntityManager();
+                FuncionarioDao funcionarioDao = new FuncionarioDao(em);
+                FuncionarioPJDao funcionarioPJDao = new FuncionarioPJDao(em);
+                FuncionarioEstagDao funcionarioEstagDao = new FuncionarioEstagDao(em);
+                FuncionarioSeniorDao funcionarioSeniorDao = new FuncionarioSeniorDao(em);
 
-        try {
-            testCreateFuncionarioPJ(em);
-            testCreateFuncionario(em);
-        } finally {
-            if (em != null) em.close();
-            if (fabrica != null) fabrica.close();
-        }
-    }
-
-    public static void testCreateFuncionario(EntityManager em) {
-        Funcionario funcionario = new Funcionario();
-        funcionario.setNome("John Doe");
-        funcionario.setHorasTrabalhadas(500);
-        funcionario.setValorPorHora(80);
-
-        em.getTransaction().begin();
-        try {
-            ensureTableExists(em, Funcionario.class);
-            persistOrUpdate(em, funcionario);
-            em.getTransaction().commit();
-
-            Funcionario found = em.find(Funcionario.class, funcionario.getId());
-            System.out.println("Funcionario encontrado: " + found.getNome());
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            e.printStackTrace();
-        }
-    }
-
-    public static void testCreateFuncionarioPJ(EntityManager em) {
-        FuncionarioPJ funcionarioPJ = new FuncionarioPJ();
-        funcionarioPJ.setNome("Maria Silva");
-        funcionarioPJ.setHorasTrabalhadas(200);
-        funcionarioPJ.setValorPorHora(150);
-        funcionarioPJ.setValorProjeto(1000);
-
-        em.getTransaction().begin();
-        try {
-            ensureTableExists(em, FuncionarioPJ.class);
-            persistOrUpdate(em, funcionarioPJ);
-            em.getTransaction().commit();
-
-            FuncionarioPJ foundPJ = em.find(FuncionarioPJ.class, funcionarioPJ.getId());
-            System.out.println("FuncionarioPJ encontrado: " + foundPJ.getNome());
-        } catch (Exception e) {
-            em.getTransaction().rollback();
-            e.printStackTrace();
-        }
-    }
-
-    private static void ensureTableExists(EntityManager em, Class<?> clazz) {
-        Session session = em.unwrap(Session.class);
-        session.doWork(new Work() {
-            @Override
-            public void execute(Connection connection) throws SQLException {
-                DatabaseMetaData metaData = connection.getMetaData();
-                Tabela tabela = clazz.getAnnotation(Tabela.class);
-                ResultSet tables = metaData.getTables(null, null, tabela.nome(), null);
-
-                if (!tables.next()) {
-                    String createTableSQL = SQLGenerator.generateCreateTableSQL(clazz);
-                    em.createNativeQuery(createTableSQL).executeUpdate();
+                try {
+                    System.out.println("Iniciando teste de FuncionarioPJ...");
+                    testCreateFuncionarioPJ(funcionarioPJDao);
+                    System.out.println("Teste de FuncionarioPJ concluído.");
+                    System.out.println("Iniciando teste de FuncionarioEstagiario...");
+                    testCreateFuncionarioEstagiario(funcionarioEstagDao);
+                    System.out.println("Teste de FuncionarioEstagiario concluído.");
+                    System.out.println("Iniciando teste de Funcionario...");
+                    testCreateFuncionario(funcionarioDao);
+                    System.out.println("Teste de Funcionario concluído.");
+                    System.out.println("Iniciando teste de FuncionarioSenior...");
+                    testCreateFuncionarioSenior(funcionarioSeniorDao);
+                    System.out.println("Teste de FuncionarioSenior concluído.");
+                } catch (Exception e) {
+                    System.err.println("Erro durante a execução dos testes: " + e.getMessage());
+                    e.printStackTrace();
+                } finally {
+                    if (em != null) em.close();
+                    if (fabrica != null) fabrica.close();
                 }
             }
-        });
-    }
 
-    private static void persistOrUpdate(EntityManager em, Object entity) {
-        Object id = em.getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
-        if (id == null || em.find(entity.getClass(), id) == null) {
-            em.persist(entity);
-        } else {
-            em.merge(entity);
+            public static void testCreateFuncionarioPJ(FuncionarioPJDao daoPj) {
+                try {
+                    FuncionarioPJ funcionarioPJ = new FuncionarioPJ();
+                    funcionarioPJ.setNome("Ana Clara");
+                    funcionarioPJ.setHorasTrabalhadas(160);
+                    funcionarioPJ.setValorPorHora(50);
+                    funcionarioPJ.setValorProjeto(1000);
+
+                    daoPj.cadastrar(funcionarioPJ);
+
+                    System.out.println("FuncionarioPJ persistido com sucesso. ID: " + funcionarioPJ.getId());
+
+                    FuncionarioPJ foundPJ = daoPj.buscarPorId(funcionarioPJ.getId());
+                    System.out.println("FuncionarioPJ encontrado: " + foundPJ.getNome());
+                    funcionarioPJ.imprimirInformacao();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public static void testCreateFuncionarioEstagiario(FuncionarioEstagDao daoEstag) {
+                try {
+                    FuncionarioEstag funcionarioEstagiario = new FuncionarioEstag();
+                    funcionarioEstagiario.setNome("Pedro Santos");
+                    funcionarioEstagiario.setHorasTrabalhadas(120);
+                    funcionarioEstagiario.setValorPorHora(20);
+                    funcionarioEstagiario.setDesconto(500);
+
+                    daoEstag.cadastrar(funcionarioEstagiario);
+
+                    System.out.println("FuncionarioEstagiario persistido com sucesso. ID: " + funcionarioEstagiario.getId());
+
+                    FuncionarioEstag foundEstagiario = daoEstag.buscarPorId(funcionarioEstagiario.getId());
+                    System.out.println("FuncionarioEstagiario encontrado: " + foundEstagiario.getNome());
+                    funcionarioEstagiario.imprimirInformacao();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public static void testCreateFuncionario(FuncionarioDao dao) {
+                try {
+                    Funcionario funcionario = new Funcionario();
+                    funcionario.setNome("John Doe");
+                    funcionario.setHorasTrabalhadas(500);
+                    funcionario.setValorPorHora(80);
+
+                    dao.cadastrar(funcionario);
+
+                    System.out.println("Funcionario persistido com sucesso. ID: " + funcionario.getId());
+
+                    Funcionario found = dao.buscarPorId(funcionario.getId());
+                    System.out.println("Funcionario encontrado: " + found.getNome());
+                    funcionario.imprimirInformacao();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public static void testCreateFuncionarioSenior(FuncionarioSeniorDao daoSenior) {
+                try {
+                    FuncionarioSenior funcionarioSenior = new FuncionarioSenior();
+                    funcionarioSenior.setNome("Carlos Alberto");
+                    funcionarioSenior.setHorasTrabalhadas(180);
+                    funcionarioSenior.setValorPorHora(100);
+                    funcionarioSenior.setBonus(2000);
+
+                    daoSenior.cadastrar(funcionarioSenior);
+
+                    System.out.println("FuncionarioSenior persistido com sucesso. ID: " + funcionarioSenior.getId());
+
+                    FuncionarioSenior foundSenior = daoSenior.buscarPorId(funcionarioSenior.getId());
+                    System.out.println("FuncionarioSenior encontrado: " + foundSenior.getNome());
+                    funcionarioSenior.imprimirInformacao();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
-    }
-}

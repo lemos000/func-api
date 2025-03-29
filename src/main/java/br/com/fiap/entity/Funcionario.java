@@ -1,25 +1,22 @@
 package br.com.fiap.entity;
 
 
-import br.com.fiap.annotation.Coluna;
-import br.com.fiap.annotation.Tabela;
-import jdk.jshell.Snippet;
-
 import javax.persistence.*;
 
 @Entity
+@Table(name = "TAB_FUNCIONARIO")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Tabela(nome="TAB_FUNCIONARIO")
 public class Funcionario {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Coluna(nome = "ID")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "funcionarioSeq")
+    @SequenceGenerator(name = "funcionarioSeq", sequenceName = "FUNCIONARIO_SEQ", allocationSize = 1)
+    @Column(name = "ID")
     private int id;
-    @Coluna(nome = "NOME", tamanho = 120, obrigatorio = true)
+    @Column(name = "NOME", length = 120, nullable = false)
     private String nome;
-    @Coluna(nome = "HORAS_TRABALHADAS", obrigatorio = true)
+    @Column(name = "HORAS_TRABALHADAS", nullable = false)
     private int horasTrabalhadas;
-    @Coluna(nome = "VALOR_POR_HORA", obrigatorio = true)
+    @Column(name = "VALOR_POR_HORA", nullable = false)
     private double valorPorHora;
 
 

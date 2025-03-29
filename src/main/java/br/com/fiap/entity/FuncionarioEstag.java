@@ -1,19 +1,12 @@
 package br.com.fiap.entity;
 
 
-import br.com.fiap.annotation.Coluna;
-import br.com.fiap.annotation.Tabela;
+import javax.persistence.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-
-@Tabela(nome="TAB_FUNCIONARIOESTAG")
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name="TAB_FUNCIONARIOESTAG")
 @Entity
 public class FuncionarioEstag extends Funcionario {
-    @Coluna(nome = "DESCONTO")
+    @Column(name = "DESCONTO")
     private double desconto;
 
     public FuncionarioEstag(String nome, int horasTrabalhadas, double valorPorHora, double desconto) {
@@ -37,4 +30,11 @@ public class FuncionarioEstag extends Funcionario {
         System.out.println("Salário final com desconto: R$ " + calcularSalario());
     }
 
+    public double getDesconto() {
+        return desconto;
+    }
+
+    public void setDesconto(double desconto) {
+        this.desconto = desconto;
+    }
 }
